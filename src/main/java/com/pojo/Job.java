@@ -1,15 +1,18 @@
 package com.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Data
-@Setter
-@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+/**
+ * 职位表
+ */
 public class Job {
-//    职位编号
-    private int J_id;
-//    职位名称
+    //职位编号
+    private Integer Id;
+    //职位名称
     private String Jname;
 }
