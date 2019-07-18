@@ -1,11 +1,7 @@
 package com.config;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +20,7 @@ public class JdbcTemplate <T>{
      *  DML 操作模板
      *
      *  */
-    public static void update(String sql,Object...args) {
+    public static Integer update(String sql,Object...args) {
         Connection conn = null;
         PreparedStatement st =null;
         try {
@@ -33,14 +29,20 @@ public class JdbcTemplate <T>{
             for(int i=0;i<args.length;i++) {
                 st.setObject(i+1, args[i]);
             }
-            st.executeUpdate();
+            int i = st.executeUpdate();
+            System.out.println(i);
+            return i;
         }catch(Exception e) {
             e.printStackTrace();
         }finally {
             JdbcUtils.closeStream(conn, st, null);
         }
+        return 0;
+
     }
-    public  List<Object> query(String sql,Object o,Object...args) {
+
+
+    public static List<Object> query(String sql,Object o,Object...args) {
         Connection conn = null;
         PreparedStatement st = null;
         ResultSet rs = null;
@@ -53,7 +55,8 @@ public class JdbcTemplate <T>{
                 st.setObject(i+1, args[i]);
             }
             rs = st.executeQuery();
-            ArrayList<T> list = new ArrayList<T>();
+            ArrayList<Object> list = new ArrayList<Object>();
+            System.out.println(resultDemo(rs, o));
             return resultDemo(rs, o);
 
         }catch(Exception e) {
@@ -73,9 +76,11 @@ public class JdbcTemplate <T>{
             Object newInstance = clazz.newInstance();//通过无参构造创建对象
             for(int i=1;i<=count;i++) {
                 String columnName = metaData.getColumnName(i);
-                /**
-                 * 反射
-                 */
+                /* *
+                 *
+                 * 反射   代理
+                 **/
+
                 Field f = clazz.getDeclaredField(columnName);
                 f.setAccessible(true);//破除私有
                 if(rs.getObject(i)!=null) {
